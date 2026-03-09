@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Career Suggestion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: teal;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkcyan;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Career Guidance Form</h2>
+
+    <div class="question">
+        <label>Name:</label><br>
+        <input type="text" id="name" style="width:100%">
+    </div>
+
+    <div class="question">
+        <label>What subjects do you like?</label><br>
+        <input type="checkbox" value="Technology"> Technology<br>
+        <input type="checkbox" value="Biology"> Biology<br>
+        <input type="checkbox" value="Business"> Business<br>
+        <input type="checkbox" value="Arts"> Arts
+    </div>
+
+    <div class="question">
+        <label>Do you enjoy problem solving?</label><br>
+        <input type="radio" name="problemSolving" value="Yes"> Yes<br>
+        <input type="radio" name="problemSolving" value="No"> No
+    </div>
+
+    <div class="question">
+        <label>Preferred Work Style:</label><br>
+        <input type="radio" name="workStyle" value="Remote"> Remote<br>
+        <input type="radio" name="workStyle" value="Office"> Office<br>
+        <input type="radio" name="workStyle" value="Hybrid"> Hybrid
+    </div>
+
+    <button onclick="submitForm()">Submit</button>
+    <div id="result"></div>
+
+</div>
+
+<script>
+function submitForm() {
+    const name = document.getElementById("name").value;
+
+    const checkboxes = document.querySelectorAll("input[type=checkbox]:checked");
+    let subjects = [];
+    checkboxes.forEach(cb => subjects.push(cb.value));
+
+    const problemSolving = document.querySelector("input[name=problemSolving]:checked")?.value;
+    const workStyle = document.querySelector("input[name=workStyle]:checked")?.value;
+
+    const userData = {
+        name,
+        subjects,
+        problemSolving,
+        workStyle
+    };
+
+    fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(res => res.json())
+    .then(data => {
+    document.getElementById("result").innerHTML =
+        "<h3>Career Suggestions:</h3>" +
+        "<p>" + data.result.replace(/\n/g, "<br>") + "</p>";
+})
+
+    .catch(err => {
+        console.error(err);
+    });
+}
+
+</script>
+
+</body>
+</html>
